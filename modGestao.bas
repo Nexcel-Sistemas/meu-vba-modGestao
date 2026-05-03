@@ -1,9 +1,5 @@
 Option Explicit
 
-' =========================================================================
-' VARIÁVEL DE BLINDAGEM ANTI-LOOP
-' Evita que funções fatais se choquem com o fechamento do Windows
-' =========================================================================
 Public SistemaEmColapso As Boolean
 
 #If VBA7 Then
@@ -33,9 +29,6 @@ Public Sub CONFIGURAR_VENDA()
     Application.EnableCancelKey = xlDisabled
     On Error GoTo 0
 
-    ' =========================================================================
-    ' AUDITORIA DE PERMISSÃO E PROTEÇÃO VBA (PREVENÇÃO DO ERRO 50289)
-    ' =========================================================================
     Dim ObjetoVBA As Object
     Dim TemAcessoVBA As Boolean
     TemAcessoVBA = False
@@ -51,25 +44,16 @@ Public Sub CONFIGURAR_VENDA()
     End If
     
     If ThisWorkbook.VBProject.Protection = 1 Then
-        MsgBox "OPERAÇÃO ABORTADA (Prevenção de Erro 50289):" & vbNewLine & vbNewLine & _
-               "O Projeto VBA da sua Matriz está PROTEGIDO COM SENHA. É impossível carimbar a ocultação das macros em um projeto trancado." & vbNewLine & vbNewLine & _
-               "SOLUÇÃO:" & vbNewLine & _
-               "1. Aperte ALT + F11" & vbNewLine & _
-               "2. Vá em Ferramentas > Propriedades do VBAProject > Proteção" & vbNewLine & _
-               "3. Desmarque 'Bloquear projeto para exibição' e apague a senha." & vbNewLine & _
-               "4. Clique OK, salve a planilha e tente novamente." & vbNewLine & vbNewLine & _
-               "Lembre-se: O arquivo do cliente será blindado via código, portanto não precisa dessa senha nativa.", vbCritical, "Nexcel Sênior - Desbloqueio Necessário"
+        MsgBox "OPERAÇÃO ABORTADA (Prevenção de Erro 50289):" & vbNewLine & vbNewLine & "O Projeto VBA da sua Matriz está PROTEGIDO COM SENHA. É impossível carimbar a ocultação das macros em um projeto trancado." & vbNewLine & vbNewLine & "SOLUÇÃO:" & vbNewLine & "1. Aperte ALT + F11" & vbNewLine & "2. Vá em Ferramentas > Propriedades do VBAProject > Proteção" & vbNewLine & "3. Desmarque 'Bloquear projeto para exibição' e apague a senha." & vbNewLine & "4. Clique OK, salve a planilha e tente novamente." & vbNewLine & vbNewLine & "Lembre-se: O arquivo do cliente será blindado via código, portanto não precisa dessa senha nativa.", vbCritical, "Nexcel Sênior - Desbloqueio Necessário"
         Exit Sub
     End If
-    ' =========================================================================
 
     Dim ModoDeusAtivo As Boolean
     ModoDeusAtivo = (VBA.Dir(VBA.Environ("APPDATA") & "\admin_key.txt", vbHidden + vbSystem + vbNormal) <> "")
     
     If Not ModoDeusAtivo Then
         Dim SenhaAdmin As String
-        SenhaAdmin = InputBox("ÁREA RESTRITA AO VENDEDOR." & vbNewLine & vbNewLine & _
-                              "Digite a senha de administrador para configurar uma nova venda:", "Segurança do Sistema")
+        SenhaAdmin = InputBox("ÁREA RESTRITA AO VENDEDOR." & vbNewLine & vbNewLine & "Digite a senha de administrador para configurar uma nova venda:", "Segurança do Sistema")
         If SenhaAdmin <> SENHA_SISTEMA() Then
             Call Cortina_De_Ferro("TENTATIVA DE VIOLAÇÃO:" & vbNewLine & "Senha de administrador incorreta." & vbNewLine & "Bloqueio de segurança ativado.")
             Exit Sub
@@ -81,11 +65,9 @@ Public Sub CONFIGURAR_VENDA()
     Dim CaminhoLista As Variant, wbLista As Workbook, wsLista As Worksheet
     Dim UltimaLinhaLista As Long, vDados As Variant, TemLista As Boolean: TemLista = False
     
-    Opcao = InputBox("SELECIONE O TIPO DE LICENCIAMENTO:" & vbNewLine & vbNewLine & _
-                     "--- PESSOAL (Trava PC + Usuário) ---" & vbNewLine & "1 - Pessoal Padrão (1 PC)" & vbNewLine & "2 - Pessoal Múltiplo (Lista de Nomes)" & vbNewLine & "3 - Pessoal Múltiplo (Quantidade)" & vbNewLine & vbNewLine & _
-                     "--- EMPRESARIAL (Trava Só PC) ---" & vbNewLine & "4 - Empresarial Padrão (1 PC)" & vbNewLine & "5 - Empresarial Múltiplo (Lista de Nomes)" & vbNewLine & "6 - Empresarial Múltiplo (Quantidade)", "Configurador - Lucas Lima")
-                     
+    Opcao = InputBox("SELECIONE O TIPO DE LICENCIAMENTO:" & vbNewLine & vbNewLine & "--- PESSOAL (Trava PC + Usuário) ---" & vbNewLine & "1 - Pessoal Padrão (1 PC)" & vbNewLine & "2 - Pessoal Múltiplo (Lista de Nomes)" & vbNewLine & "3 - Pessoal Múltiplo (Quantidade)" & vbNewLine & vbNewLine & "--- EMPRESARIAL (Trava Só PC) ---" & vbNewLine & "4 - Empresarial Padrão (1 PC)" & vbNewLine & "5 - Empresarial Múltiplo (Lista de Nomes)" & vbNewLine & "6 - Empresarial Múltiplo (Quantidade)", "Configurador - Lucas Lima")
     If Not (Opcao Like "[1-6]") Then Exit Sub
+    
     Dim MaxVagas As String: MaxVagas = "1"
     Dim ModoLista As Boolean: ModoLista = False
     
@@ -181,25 +163,16 @@ Public Sub CONFIGURAR_VENDA()
     
     Dim CaminhoTempOrigem As String
     CaminhoTempOrigem = Environ("TEMP") & "\Nexcel_Pre_Compilado_" & Format(Now, "yymmddhhmmss") & ".xlsm"
-    
     ThisWorkbook.SaveCopyAs CaminhoTempOrigem
     
-    ' =========================================================================
-    ' INJEÇÃO GLOBAL: COFRE DUPLO + MODO KIOSK ABSOLUTO (APENAS ABAS VISÍVEIS)
-    '==========================================================================
     Call INJETAR_PROTECAO_VISIBILIDADE(CaminhoTempOrigem)
-    
-    '==========================================================================
-    ' MOTOR DE BLINDAGEM HEXADECIMAL
-    '==========================================================================
     Call MotorDeBlindagemIntegrado(CaminhoTempOrigem, CStr(CaminhoSalvar))
     
     Call ForcarExibirTudo
     ThisWorkbook.Saved = True
     Application.EnableEvents = True
     
-    MsgBox "VENDA CONFIGURADA E BLINDADA COM SUCESSO!" & vbNewLine & vbNewLine & _
-           "A planilha 100% blindada e camuflada foi salva em:" & vbNewLine & CaminhoSalvar, vbInformation, "Nexcel Sênior - Operação Perfeita"
+    MsgBox "VENDA CONFIGURADA E BLINDADA COM SUCESSO!" & vbNewLine & vbNewLine & "A planilha 100% blindada e camuflada foi salva em:" & vbNewLine & CaminhoSalvar, vbInformation, "Nexcel Sênior - Operação Perfeita"
 End Sub
 
 Public Sub REALIZAR_MIGRACAO()
@@ -234,15 +207,12 @@ Public Sub REALIZAR_MIGRACAO()
         
         Dim TimeStamp As String
         TimeStamp = Format(Now, "yyyymmddhhmmss")
-        
         ws.Range("C1").Value = "EM_TRANSITO|" & TimeStamp
         Call modSentinela.GravarStatusSentinela("MIGRADO_LOCAL")
-        
         SaveSetting "SysSentinel_Security", "Bans", AntigoPC, TimeStamp
     
         Call ForcarOcultarTudo
         ThisWorkbook.Save
-        
         Call Cortina_Migracao("AVISO DE MIGRAÇÃO: Esta licença foi transferida para o computador: " & NovoPC)
     End If
 End Sub
@@ -301,7 +271,6 @@ Public Sub ForcarOcultarTudo()
             .Cells.Clear
             .Cells.Interior.Color = RGB(169, 208, 142)
             .Cells.Font.Color = RGB(255, 255, 255)
-            
             Application.DisplayAlerts = False
             With .Range("B10:S14")
                 .MergeCells = True
@@ -319,11 +288,14 @@ Public Sub ForcarOcultarTudo()
     End If
     For Each ws In ThisWorkbook.Worksheets
         If Not ws Is Nothing Then
-            If ws.Name <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
+            If UCase(ws.Name) <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
         End If
     Next ws
     ThisWorkbook.Protect Password:=SENHA_SISTEMA(), Structure:=True, Windows:=True
     On Error GoTo 0
+    Application.ScreenUpdating = True
+    DoEvents
+    Sleep 150
     Set wsTravado = Nothing
     Set ws = Nothing
 End Sub
@@ -331,28 +303,26 @@ End Sub
 Public Sub ForcarExibirTudo()
     Dim ws As Worksheet
     Dim PlanilhaLiberada As Worksheet
-    
     On Error Resume Next
     ThisWorkbook.Unprotect SENHA_SISTEMA()
-    
     For Each ws In ThisWorkbook.Worksheets
         If Not ws Is Nothing Then
-            If ws.Name <> "TRAVADO" And ws.Name <> "Licenca_Sys" And ws.Name <> NOME_ABA_OFFLINE Then
+            If UCase(ws.Name) <> "TRAVADO" And UCase(ws.Name) <> "LICENCA_SYS" And UCase(ws.Name) <> UCase(NOME_ABA_OFFLINE) Then
                 ws.Visible = xlSheetVisible
                 If PlanilhaLiberada Is Nothing Then Set PlanilhaLiberada = ws
             End If
         End If
     Next ws
-    
     If Not PlanilhaLiberada Is Nothing Then PlanilhaLiberada.Activate
-    
     Application.DisplayAlerts = False
     Set ws = ThisWorkbook.Sheets("TRAVADO")
     If Not ws Is Nothing Then ws.Delete
     Application.DisplayAlerts = True
-    
     ThisWorkbook.Unprotect SENHA_SISTEMA()
     On Error GoTo 0
+    Application.ScreenUpdating = True
+    DoEvents
+    Sleep 150
     Set ws = Nothing
     Set PlanilhaLiberada = Nothing
 End Sub
@@ -379,7 +349,6 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
             .Cells.Interior.Color = RGB(150, 0, 0)
             .Cells.Font.Color = RGB(255, 255, 255)
             .Range("A1:Z100").Locked = True
-            
             With .Range("B5:S6")
                 .MergeCells = True
                 .HorizontalAlignment = xlCenter
@@ -388,12 +357,10 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
                 .Font.Size = 36
                 .Font.Bold = True
             End With
-            
             Dim LinhasMsg() As String
             Dim i As Long, linhaAtual As Long
             LinhasMsg = Split("MOTIVO DA INTERCEPTAÇÃO: " & MensagemErro, vbNewLine)
             linhaAtual = 8
-            
             For i = LBound(LinhasMsg) To UBound(LinhasMsg)
                 If Trim(LinhasMsg(i)) <> "" Then
                     With .Range(.Cells(linhaAtual, 2), .Cells(linhaAtual + 1, 19))
@@ -408,7 +375,6 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
                     linhaAtual = linhaAtual + 3
                 End If
             Next i
-            
             With .Range(.Cells(linhaAtual, 2), .Cells(linhaAtual + 1, 19))
                 .MergeCells = True
                 .HorizontalAlignment = xlCenter
@@ -417,20 +383,20 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
                 .Value = "Esta tentativa de acesso não foi autorizada. Entre em contato com o suporte"
                 .Font.Size = 14
             End With
-            
             .Protect Password:=SENHA_SISTEMA(), UserInterfaceOnly:=True
         End With
     End If
     ActiveWindow.DisplayGridlines = False
     ActiveWindow.DisplayHeadings = False
     For Each ws In ThisWorkbook.Worksheets
-        If ws.Name <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
+        If UCase(ws.Name) <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
     Next ws
     ThisWorkbook.Protect Password:=SENHA_SISTEMA(), Structure:=True, Windows:=True
     On Error GoTo 0
     Application.ScreenUpdating = True
     Application.Visible = True
     DoEvents
+    Sleep 150
 End Sub
 
 Public Sub AplicarCortinaLaranja(ByVal MensagemErro As String)
@@ -455,7 +421,6 @@ Public Sub AplicarCortinaLaranja(ByVal MensagemErro As String)
             .Cells.Interior.Color = RGB(226, 107, 10)
             .Cells.Font.Color = RGB(255, 255, 255)
             .Range("A1:Z100").Locked = True
-            
             With .Range("B5:S6")
                 .MergeCells = True
                 .HorizontalAlignment = xlCenter
@@ -464,12 +429,10 @@ Public Sub AplicarCortinaLaranja(ByVal MensagemErro As String)
                 .Font.Size = 36
                 .Font.Bold = True
             End With
-            
             Dim LinhasMsg() As String
             Dim i As Long, linhaAtual As Long
             LinhasMsg = Split(MensagemErro, vbNewLine)
             linhaAtual = 8
-            
             For i = LBound(LinhasMsg) To UBound(LinhasMsg)
                 If Trim(LinhasMsg(i)) <> "" Then
                     With .Range(.Cells(linhaAtual, 2), .Cells(linhaAtual + 1, 19))
@@ -484,46 +447,34 @@ Public Sub AplicarCortinaLaranja(ByVal MensagemErro As String)
                     linhaAtual = linhaAtual + 3
                 End If
             Next i
-            
             .Protect Password:=SENHA_SISTEMA(), UserInterfaceOnly:=True
         End With
     End If
     ActiveWindow.DisplayGridlines = False
     ActiveWindow.DisplayHeadings = False
     For Each ws In ThisWorkbook.Worksheets
-        If ws.Name <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
+        If UCase(ws.Name) <> "TRAVADO" Then ws.Visible = xlSheetVeryHidden
     Next ws
     ThisWorkbook.Protect Password:=SENHA_SISTEMA(), Structure:=True, Windows:=True
     On Error GoTo 0
     Application.ScreenUpdating = True
     Application.Visible = True
     DoEvents
+    Sleep 150
 End Sub
 
-' =========================================================================
-' BLOCO DE FECHAMENTO EXTREMO E ANTI-BUG PARA OS POPUPS
-' =========================================================================
 Public Sub ExecutarBloqueioMortal()
     On Error Resume Next
     SistemaEmColapso = True
-    Application.EnableEvents = False
-    
     Call AplicarCortinaDeFerro("COMANDO DE BLOQUEIO RECEBIDO.")
-    
-    ' Sobe o Full Screen cirurgicamente JUNTO com a MsgBox
     Application.DisplayFullScreen = True
-    Application.ScreenUpdating = True
-    Application.Visible = True
     AppActivate Application.Caption
     DoEvents
-    
     MsgBox "SISTEMA BLOQUEADO PELO FORNECEDOR." & vbNewLine & "ENTRE EM CONTATO COM O SUPORTE.", vbCritical + vbSystemModal, "ACESSO NEGADO"
-    
-    ' Salva silenciosamente e chama o motor de fechamento seguro
+    Application.EnableEvents = False
     Application.DisplayAlerts = False
     ThisWorkbook.Save
     ThisWorkbook.Saved = True
-    
     Call FecharSistemaBlindado
     On Error GoTo 0
 End Sub
@@ -531,24 +482,15 @@ End Sub
 Public Sub Cortina_De_Ferro(ByVal Msg As String)
     On Error Resume Next
     SistemaEmColapso = True
-    Application.EnableEvents = False
-    
     Call AplicarCortinaDeFerro(Msg)
-    
-    ' Sobe o Full Screen cirurgicamente JUNTO com a MsgBox
     Application.DisplayFullScreen = True
-    Application.ScreenUpdating = True
-    Application.Visible = True
     AppActivate Application.Caption
     DoEvents
-    
     MsgBox "ACESSO NEGADO!" & vbNewLine & vbNewLine & Msg, vbCritical + vbSystemModal, "BLOQUEIO DE SEGURANÇA"
-    
-    ' Salva silenciosamente e chama o motor de fechamento seguro
+    Application.EnableEvents = False
     Application.DisplayAlerts = False
     ThisWorkbook.Save
     ThisWorkbook.Saved = True
-    
     Call FecharSistemaBlindado
     On Error GoTo 0
 End Sub
@@ -556,29 +498,18 @@ End Sub
 Public Sub Cortina_Migracao(ByVal Msg As String)
     On Error Resume Next
     SistemaEmColapso = True
-    Application.EnableEvents = False
-    
     Call AplicarCortinaLaranja(Msg)
-    
-    ' Sobe o Full Screen cirurgicamente JUNTO com a MsgBox
     Application.DisplayFullScreen = True
-    Application.ScreenUpdating = True
-    Application.Visible = True
     AppActivate Application.Caption
     DoEvents
-    
     MsgBox "SISTEMA MIGRADO!" & vbNewLine & vbNewLine & Msg, vbExclamation + vbSystemModal, "MIGRAÇÃO CONCLUÍDA"
-    
-    ' Salva silenciosamente e chama o motor de fechamento seguro
+    Application.EnableEvents = False
     Application.DisplayAlerts = False
     ThisWorkbook.Save
     ThisWorkbook.Saved = True
-    
     Call FecharSistemaBlindado
     On Error GoTo 0
 End Sub
-
-' =========================================================================
 
 Public Function VerificarStatusOnlineCSV() As String
     VerificarStatusOnlineCSV = ""
@@ -664,15 +595,10 @@ Public Function VerificarContagemOnline(ByVal NomeCliente As String, ByVal Email
         CSVContent = Replace(CSVContent, vbCr, "")
         Linhas = Split(CSVContent, vbLf)
         For i = LBound(Linhas) To UBound(Linhas)
-            If InStr(1, Linhas(i), NomeCliente, vbTextCompare) > 0 And _
-               InStr(1, Linhas(i), EmailCliente, vbTextCompare) > 0 And _
-               InStr(1, Linhas(i), modSentinela.ID_PRODUTO, vbTextCompare) > 0 Then
-               
-               If InStr(1, Linhas(i), "MIGRACAO", vbTextCompare) = 0 And _
-                  InStr(1, Linhas(i), "MIGRADO", vbTextCompare) = 0 Then
+            If InStr(1, Linhas(i), NomeCliente, vbTextCompare) > 0 And InStr(1, Linhas(i), EmailCliente, vbTextCompare) > 0 And InStr(1, Linhas(i), modSentinela.ID_PRODUTO, vbTextCompare) > 0 Then
+               If InStr(1, Linhas(i), "MIGRACAO", vbTextCompare) = 0 And InStr(1, Linhas(i), "MIGRADO", vbTextCompare) = 0 Then
                    Contagem = Contagem + 1
                End If
-               
             End If
         Next i
     End If
@@ -1063,24 +989,18 @@ Private Sub SubstituirTextoXML(ByVal CaminhoArquivo As String, ByVal textoAntigo
 
     If InStr(1, conteudo, textoAntigo, vbTextCompare) > 0 Then
         conteudo = Replace(conteudo, textoAntigo, textoNovo, 1, -1, vbTextCompare)
-        
         objStreamUTF8.Open
         objStreamUTF8.WriteText conteudo
-        
         objStreamUTF8.Position = 3
-        
         Set objStreamBin = CreateObject("ADODB.Stream")
         objStreamBin.Type = 1
         objStreamBin.Open
-        
         objStreamUTF8.CopyTo objStreamBin
         objStreamBin.SaveToFile CaminhoArquivo, 2
-        
         objStreamBin.Close
         Set objStreamBin = Nothing
         objStreamUTF8.Close
     End If
-    
     Set objStreamUTF8 = Nothing
 End Sub
 
@@ -1248,9 +1168,6 @@ Private Function IsFileLocked(CaminhoArquivo As String) As Boolean
     On Error GoTo 0
 End Function
 
-' =========================================================================
-' INJEÇÃO DE VISIBILIDADE (MODO KIOSK EXTREMO APENAS COM ABAS)
-' =========================================================================
 Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
     Dim wbDestino As Workbook
     Dim objComponente As Object
@@ -1264,7 +1181,6 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
     Dim strAppMode As String
     
     On Error GoTo TratarErroAcesso
-    
     eventosOriginais = Application.EnableEvents
     Application.EnableEvents = False
     
@@ -1273,12 +1189,10 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
     If wbDestino.VBProject.Protection = 1 Then GoTo FecharArquivo
     
     For Each objComponente In wbDestino.VBProject.VBComponents
-        
         If objComponente.Type = 1 Then
             Set objModulo = objComponente.CodeModule
             achouPrivate = False
             qtdLinhasDecl = objModulo.CountOfDeclarationLines
-            
             If qtdLinhasDecl > 0 Then
                 For linhaAtual = 1 To qtdLinhasDecl
                     If InStr(1, objModulo.Lines(linhaAtual, 1), "Option Private Module", vbTextCompare) > 0 Then
@@ -1287,20 +1201,14 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
                     End If
                 Next linhaAtual
             End If
-            
-            If Not achouPrivate Then
-                objModulo.InsertLines 1, "Option Private Module"
-            End If
+            If Not achouPrivate Then objModulo.InsertLines 1, "Option Private Module"
         End If
         
         If objComponente.Name = wbDestino.CodeName Then
             Set objTwb = objComponente.CodeModule
             temAppMode = False
-            
             If objTwb.CountOfLines > 0 Then
-                If InStr(1, objTwb.Lines(1, objTwb.CountOfLines), "Workbook_Activate", vbTextCompare) > 0 Then
-                    temAppMode = True
-                End If
+                If InStr(1, objTwb.Lines(1, objTwb.CountOfLines), "Workbook_Activate", vbTextCompare) > 0 Then temAppMode = True
             End If
             
             If Not temAppMode Then
@@ -1318,14 +1226,12 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
                 strAppMode = strAppMode & "    Private Declare Function SetWindowPos Lib ""user32"" (ByVal hwnd As Long, ByVal hWndInsertAfter As Long, ByVal x As Long, ByVal y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long) As Long" & vbCrLf
                 strAppMode = strAppMode & "    Private Declare Function GetSystemMetrics Lib ""user32"" (ByVal nIndex As Long) As Long" & vbCrLf
                 strAppMode = strAppMode & "#End If" & vbCrLf & vbCrLf
-                
                 strAppMode = strAppMode & "Private Const GWL_STYLE As Long = -16" & vbCrLf
                 strAppMode = strAppMode & "Private Const WS_CAPTION As Long = &HC00000" & vbCrLf
                 strAppMode = strAppMode & "Private Const WS_THICKFRAME As Long = &H40000" & vbCrLf
                 strAppMode = strAppMode & "Private Const SWP_FRAMECHANGED As Long = &H20" & vbCrLf
                 strAppMode = strAppMode & "Private Const SWP_SHOWWINDOW As Long = &H40" & vbCrLf & vbCrLf
                 strAppMode = strAppMode & "Private lOriginalStyle As Long" & vbCrLf & vbCrLf
-                
                 strAppMode = strAppMode & "Private Sub Workbook_Activate()" & vbCrLf
                 strAppMode = strAppMode & "    On Error Resume Next" & vbCrLf
                 strAppMode = strAppMode & "    Application.DisplayFormulaBar = False" & vbCrLf
@@ -1353,7 +1259,6 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
                 strAppMode = strAppMode & "    SetWindowPos hwnd, 0, 0, 0, w, h, SWP_FRAMECHANGED Or SWP_SHOWWINDOW" & vbCrLf
                 strAppMode = strAppMode & "    On Error GoTo 0" & vbCrLf
                 strAppMode = strAppMode & "End Sub" & vbCrLf & vbCrLf
-                
                 strAppMode = strAppMode & "Private Sub Workbook_Deactivate()" & vbCrLf
                 strAppMode = strAppMode & "    On Error Resume Next" & vbCrLf
                 strAppMode = strAppMode & "    Application.DisplayFormulaBar = True" & vbCrLf
@@ -1374,35 +1279,26 @@ Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
                 strAppMode = strAppMode & "    Application.WindowState = xlMaximized" & vbCrLf
                 strAppMode = strAppMode & "    On Error GoTo 0" & vbCrLf
                 strAppMode = strAppMode & "End Sub" & vbCrLf & vbCrLf
-                
                 strAppMode = strAppMode & "Private Sub Workbook_SheetActivate(ByVal Sh As Object)" & vbCrLf
                 strAppMode = strAppMode & "    On Error Resume Next" & vbCrLf
                 strAppMode = strAppMode & "    ActiveWindow.DisplayHeadings = False" & vbCrLf
                 strAppMode = strAppMode & "    ActiveWindow.DisplayGridlines = False" & vbCrLf
                 strAppMode = strAppMode & "    On Error GoTo 0" & vbCrLf
                 strAppMode = strAppMode & "End Sub"
-                
                 objTwb.AddFromString strAppMode
             End If
         End If
-        
     Next objComponente
 
 FecharArquivo:
     wbDestino.Save
     wbDestino.Close SaveChanges:=False
-    
     Application.EnableEvents = eventosOriginais
     Exit Sub
-    
 TratarErroAcesso:
     Resume Next
 End Sub
 
-
-' =========================================================================
-' MOTOR DE SEGURANÇA E FECHAMENTO: Garante que outras planilhas fiquem salvas
-' =========================================================================
 Private Sub RestaurarUI_Seguro()
     On Error Resume Next
     Application.DisplayFullScreen = False
@@ -1417,14 +1313,38 @@ Private Sub RestaurarUI_Seguro()
     On Error GoTo 0
 End Sub
 
+Public Sub ForcarRenderizacaoCortina()
+    On Error Resume Next
+    Application.ScreenUpdating = True
+    ThisWorkbook.Sheets("TRAVADO").Visible = xlSheetVisible
+    ThisWorkbook.Sheets("TRAVADO").Activate
+    ActiveWindow.DisplayGridlines = False
+    DoEvents
+    Sleep 150
+    On Error GoTo 0
+End Sub
+
+Public Sub OcultarAbasProtecaoCTRL()
+    Dim ws As Worksheet
+    On Error Resume Next
+    Application.ScreenUpdating = False
+    ThisWorkbook.Sheets("TRAVADO").Visible = xlSheetVisible
+    For Each ws In ThisWorkbook.Sheets
+        If UCase(ws.Name) <> "TRAVADO" And UCase(ws.Name) <> UCase(NOME_ABA_OFFLINE) Then
+            ws.Visible = xlSheetVeryHidden
+        End If
+    Next ws
+    Application.ScreenUpdating = True
+    On Error GoTo 0
+End Sub
+
 Private Sub FecharSistemaBlindado()
     Dim wb As Workbook, temOutroVisivel As Boolean
     temOutroVisivel = False
     
     On Error Resume Next
-    If Workbooks.Count > 1 Then
-        For Each wb In Workbooks
-            ' Ignora planilhas ocultas do sistema (como a PERSONAL.XLSB)
+    If Application.Workbooks.Count > 1 Then
+        For Each wb In Application.Workbooks
             If UCase(wb.Name) <> UCase(ThisWorkbook.Name) And UCase(wb.Name) <> "PERSONAL.XLSB" Then
                 If wb.Windows.Count > 0 Then
                     If wb.Windows(1).Visible = True Then
@@ -1437,45 +1357,57 @@ Private Sub FecharSistemaBlindado()
     End If
     
     If temOutroVisivel Then
-        Application.EnableEvents = True ' Permite a transição normal restaurando a UI
+        Application.EnableEvents = True
         wb.Activate
         DoEvents
-    Else
         Application.EnableEvents = False
-        Call RestaurarUI_Seguro ' Limpa o Excel do cliente caso ele o abra futuramente
+        ThisWorkbook.Close SaveChanges:=False
+        Application.EnableEvents = True
+    Else
+        Call RestaurarUI_Seguro
+        Application.EnableEvents = False
+        ThisWorkbook.Saved = True
         Application.Quit
     End If
-    
-    Application.EnableEvents = False ' Tranca eventos finais para impedir o "Cancel-Bug" nativo do Excel
-    ThisWorkbook.Close SaveChanges:=False
-    Application.EnableEvents = True
     On Error GoTo 0
 End Sub
 
-' =========================================================================
-' SAIR DO SISTEMA (SIMULA O BOTÃO X NATIVO) - ISOLADO E SEM LOOP VISUAL
-' =========================================================================
 Public Sub SAIR_DO_SISTEMA()
     On Error Resume Next
+    Dim resposta As Integer
+    Dim precisaSalvar As Boolean
+    Dim StatusNuvem As String
+    
+    precisaSalvar = Not ThisWorkbook.Saved
+    
+    If precisaSalvar Then
+        resposta = MsgBox("Deseja salvar as alterações feitas em '" & ThisWorkbook.Name & "'?", vbYesNoCancel + vbQuestion, "Salvar Alterações")
+        If resposta = vbCancel Then Exit Sub
+    Else
+        resposta = vbYes
+    End If
     
     Call VerificarPendenciasEnvio
+    StatusNuvem = VerificarStatusOnlineCSV()
     
-    If Not ThisWorkbook.Saved Then
-        Dim resposta As Integer
-        resposta = MsgBox("Deseja salvar as alterações feitas em '" & ThisWorkbook.Name & "'?", vbYesNoCancel + vbQuestion, "Salvar Alterações")
-        
-        If resposta = vbYes Then
-            Application.EnableEvents = False
-            ThisWorkbook.Save
-            Application.EnableEvents = True
-        ElseIf resposta = vbCancel Then
-            Exit Sub
-        Else
-            ThisWorkbook.Saved = True
-        End If
+    If StatusNuvem = "BLOQUEADO" Then
+        Call Cortina_De_Ferro("SISTEMA BLOQUEADO VIA NUVEM.")
+        Exit Sub
+    End If
+    
+    Call OcultarAbasProtecaoCTRL
+    Call ForcarRenderizacaoCortina
+    
+    If precisaSalvar And resposta = vbYes Then
+        Application.EnableEvents = False
+        ThisWorkbook.Save
+        Application.EnableEvents = True
+    Else
+        Application.EnableEvents = False
+        ThisWorkbook.Saved = True
+        Application.EnableEvents = True
     End If
     
     Call FecharSistemaBlindado
     On Error GoTo 0
 End Sub
-
