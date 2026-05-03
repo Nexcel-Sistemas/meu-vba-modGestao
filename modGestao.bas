@@ -1358,15 +1358,20 @@ Private Sub FecharSistemaBlindado()
     
     If temOutroVisivel Then
         Application.EnableEvents = True
+        Application.ScreenUpdating = True
+        Application.Interactive = True
+        Application.Cursor = xlDefault
+        
         wb.Activate
         DoEvents
-        Application.EnableEvents = False
+        
+        ThisWorkbook.Saved = True
         ThisWorkbook.Close SaveChanges:=False
-        Application.EnableEvents = True
     Else
         Call RestaurarUI_Seguro
         Application.EnableEvents = False
         ThisWorkbook.Saved = True
+        Application.DisplayAlerts = False
         Application.Quit
     End If
     On Error GoTo 0
@@ -1411,3 +1416,4 @@ Public Sub SAIR_DO_SISTEMA()
     Call FecharSistemaBlindado
     On Error GoTo 0
 End Sub
+
