@@ -1,9 +1,8 @@
-Attribute VB_Name = "modGestao"
 Option Explicit
 
 ' =========================================================================
-' VARI¡VEL DE BLINDAGEM ANTI-LOOP
-' Evita que funÁıes fatais se choquem com o fechamento do Windows
+' VARI√ÅVEL DE BLINDAGEM ANTI-LOOP
+' Evita que fun√ß√µes fatais se choquem com o fechamento do Windows
 ' =========================================================================
 Public SistemaEmColapso As Boolean
 
@@ -35,7 +34,7 @@ Public Sub CONFIGURAR_VENDA()
     On Error GoTo 0
 
     ' =========================================================================
-    ' AUDITORIA DE PERMISS√O E PROTE«√O VBA (PREVEN«√O DO ERRO 50289)
+    ' AUDITORIA DE PERMISS√ÉO E PROTE√á√ÉO VBA (PREVEN√á√ÉO DO ERRO 50289)
     ' =========================================================================
     Dim ObjetoVBA As Object
     Dim TemAcessoVBA As Boolean
@@ -47,19 +46,19 @@ Public Sub CONFIGURAR_VENDA()
     On Error GoTo 0
     
     If Not TemAcessoVBA Then
-        MsgBox "OPERA«√O ABORTADA!" & vbNewLine & vbNewLine & "Para compilar o sistema ocultando as macros, o Excel precisa de permiss„o de acesso." & vbNewLine & vbNewLine & "V· em: Arquivo > OpÁıes > Central de Confiabilidade > ConfiguraÁıes > ConfiguraÁıes de Macro." & vbNewLine & "Marque a caixa: 'Confiar no acesso ao modelo de objeto do projeto do VBA'.", vbCritical, "Nexcel SÍnior - Auditoria de Permiss„o"
+        MsgBox "OPERA√á√ÉO ABORTADA!" & vbNewLine & vbNewLine & "Para compilar o sistema ocultando as macros, o Excel precisa de permiss√£o de acesso." & vbNewLine & vbNewLine & "V√° em: Arquivo > Op√ß√µes > Central de Confiabilidade > Configura√ß√µes > Configura√ß√µes de Macro." & vbNewLine & "Marque a caixa: 'Confiar no acesso ao modelo de objeto do projeto do VBA'.", vbCritical, "Nexcel S√™nior - Auditoria de Permiss√£o"
         Exit Sub
     End If
     
     If ThisWorkbook.VBProject.Protection = 1 Then
-        MsgBox "OPERA«√O ABORTADA (PrevenÁ„o de Erro 50289):" & vbNewLine & vbNewLine & _
-               "O Projeto VBA da sua Matriz est· PROTEGIDO COM SENHA. … impossÌvel carimbar a ocultaÁ„o das macros em um projeto trancado." & vbNewLine & vbNewLine & _
-               "SOLU«√O:" & vbNewLine & _
+        MsgBox "OPERA√á√ÉO ABORTADA (Preven√ß√£o de Erro 50289):" & vbNewLine & vbNewLine & _
+               "O Projeto VBA da sua Matriz est√° PROTEGIDO COM SENHA. √â imposs√≠vel carimbar a oculta√ß√£o das macros em um projeto trancado." & vbNewLine & vbNewLine & _
+               "SOLU√á√ÉO:" & vbNewLine & _
                "1. Aperte ALT + F11" & vbNewLine & _
-               "2. V· em Ferramentas > Propriedades do VBAProject > ProteÁ„o" & vbNewLine & _
-               "3. Desmarque 'Bloquear projeto para exibiÁ„o' e apague a senha." & vbNewLine & _
+               "2. V√° em Ferramentas > Propriedades do VBAProject > Prote√ß√£o" & vbNewLine & _
+               "3. Desmarque 'Bloquear projeto para exibi√ß√£o' e apague a senha." & vbNewLine & _
                "4. Clique OK, salve a planilha e tente novamente." & vbNewLine & vbNewLine & _
-               "Lembre-se: O arquivo do cliente ser· blindado via cÛdigo, portanto n„o precisa dessa senha nativa.", vbCritical, "Nexcel SÍnior - Desbloqueio Necess·rio"
+               "Lembre-se: O arquivo do cliente ser√° blindado via c√≥digo, portanto n√£o precisa dessa senha nativa.", vbCritical, "Nexcel S√™nior - Desbloqueio Necess√°rio"
         Exit Sub
     End If
     ' =========================================================================
@@ -69,10 +68,10 @@ Public Sub CONFIGURAR_VENDA()
     
     If Not ModoDeusAtivo Then
         Dim SenhaAdmin As String
-        SenhaAdmin = InputBox("¡REA RESTRITA AO VENDEDOR." & vbNewLine & vbNewLine & _
-                              "Digite a senha de administrador para configurar uma nova venda:", "SeguranÁa do Sistema")
+        SenhaAdmin = InputBox("√ÅREA RESTRITA AO VENDEDOR." & vbNewLine & vbNewLine & _
+                              "Digite a senha de administrador para configurar uma nova venda:", "Seguran√ßa do Sistema")
         If SenhaAdmin <> SENHA_SISTEMA() Then
-            Call Cortina_De_Ferro("TENTATIVA DE VIOLA«√O:" & vbNewLine & "Senha de administrador incorreta." & vbNewLine & "Bloqueio de seguranÁa ativado.")
+            Call Cortina_De_Ferro("TENTATIVA DE VIOLA√á√ÉO:" & vbNewLine & "Senha de administrador incorreta." & vbNewLine & "Bloqueio de seguran√ßa ativado.")
             Exit Sub
         End If
     End If
@@ -83,8 +82,8 @@ Public Sub CONFIGURAR_VENDA()
     Dim UltimaLinhaLista As Long, vDados As Variant, TemLista As Boolean: TemLista = False
     
     Opcao = InputBox("SELECIONE O TIPO DE LICENCIAMENTO:" & vbNewLine & vbNewLine & _
-                     "--- PESSOAL (Trava PC + Usu·rio) ---" & vbNewLine & "1 - Pessoal Padr„o (1 PC)" & vbNewLine & "2 - Pessoal M˙ltiplo (Lista de Nomes)" & vbNewLine & "3 - Pessoal M˙ltiplo (Quantidade)" & vbNewLine & vbNewLine & _
-                     "--- EMPRESARIAL (Trava SÛ PC) ---" & vbNewLine & "4 - Empresarial Padr„o (1 PC)" & vbNewLine & "5 - Empresarial M˙ltiplo (Lista de Nomes)" & vbNewLine & "6 - Empresarial M˙ltiplo (Quantidade)", "Configurador - Lucas Lima")
+                     "--- PESSOAL (Trava PC + Usu√°rio) ---" & vbNewLine & "1 - Pessoal Padr√£o (1 PC)" & vbNewLine & "2 - Pessoal M√∫ltiplo (Lista de Nomes)" & vbNewLine & "3 - Pessoal M√∫ltiplo (Quantidade)" & vbNewLine & vbNewLine & _
+                     "--- EMPRESARIAL (Trava S√≥ PC) ---" & vbNewLine & "4 - Empresarial Padr√£o (1 PC)" & vbNewLine & "5 - Empresarial M√∫ltiplo (Lista de Nomes)" & vbNewLine & "6 - Empresarial M√∫ltiplo (Quantidade)", "Configurador - Lucas Lima")
                      
     If Not (Opcao Like "[1-6]") Then Exit Sub
     Dim MaxVagas As String: MaxVagas = "1"
@@ -93,7 +92,7 @@ Public Sub CONFIGURAR_VENDA()
     Select Case Opcao
         Case "2", "5"
             ModoLista = True
-            MsgBox "IMPORTA«√O DE LISTA:" & vbNewLine & vbNewLine & "Selecione o arquivo Excel (.xlsx ou .xls) contendo a lista." & vbNewLine & "Coluna A: Nome da M·quina (ObrigatÛrio)" & vbNewLine & IIf(Opcao = "2", "Coluna B: Nome de Usu·rio (ObrigatÛrio para OpÁ„o 2)", ""), vbInformation, "Importar Dados"
+            MsgBox "IMPORTA√á√ÉO DE LISTA:" & vbNewLine & vbNewLine & "Selecione o arquivo Excel (.xlsx ou .xls) contendo a lista." & vbNewLine & "Coluna A: Nome da M√°quina (Obrigat√≥rio)" & vbNewLine & IIf(Opcao = "2", "Coluna B: Nome de Usu√°rio (Obrigat√≥rio para Op√ß√£o 2)", ""), vbInformation, "Importar Dados"
             CaminhoLista = Application.GetOpenFilename("Excel Files (*.xls*), *.xls*", , "SELECIONE A PLANILHA COM A LISTA")
             If CaminhoLista = False Then Exit Sub
             Application.ScreenUpdating = False
@@ -110,7 +109,7 @@ Public Sub CONFIGURAR_VENDA()
             TemLista = True
             Application.ScreenUpdating = True
         Case "3", "6"
-            QtdLicencas = InputBox("Quantas licenÁas (m·quinas) ser„o permitidas no total?", "Definir Limite")
+            QtdLicencas = InputBox("Quantas licen√ßas (m√°quinas) ser√£o permitidas no total?", "Definir Limite")
             If Not IsNumeric(QtdLicencas) Or Val(QtdLicencas) < 1 Then Exit Sub
             MaxVagas = QtdLicencas
     End Select
@@ -186,7 +185,7 @@ Public Sub CONFIGURAR_VENDA()
     ThisWorkbook.SaveCopyAs CaminhoTempOrigem
     
     ' =========================================================================
-    ' INJE«√O GLOBAL: COFRE DUPLO + MODO KIOSK ABSOLUTO (APENAS ABAS VISÕVEIS)
+    ' INJE√á√ÉO GLOBAL: COFRE DUPLO + MODO KIOSK ABSOLUTO (APENAS ABAS VIS√çVEIS)
     '==========================================================================
     Call INJETAR_PROTECAO_VISIBILIDADE(CaminhoTempOrigem)
     
@@ -200,15 +199,15 @@ Public Sub CONFIGURAR_VENDA()
     Application.EnableEvents = True
     
     MsgBox "VENDA CONFIGURADA E BLINDADA COM SUCESSO!" & vbNewLine & vbNewLine & _
-           "A planilha 100% blindada e camuflada foi salva em:" & vbNewLine & CaminhoSalvar, vbInformation, "Nexcel SÍnior - OperaÁ„o Perfeita"
+           "A planilha 100% blindada e camuflada foi salva em:" & vbNewLine & CaminhoSalvar, vbInformation, "Nexcel S√™nior - Opera√ß√£o Perfeita"
 End Sub
 
 Public Sub REALIZAR_MIGRACAO()
     Dim Senha As String, NovoPC As String, NovoUser As String, AntigoPC As String, NomeCli As String, EmailCli As String, IPCli As String
     Dim ws As Worksheet, TipoLic As Integer, StringEnvio As String
     
-    Senha = InputBox("Digite a senha QUERO_MIGRAR para prosseguir com a migraÁ„o:", "Migrar LicenÁa")
-    If Senha <> "QUERO_MIGRAR" Then MsgBox "Senha inv·lida.", vbCritical: Exit Sub
+    Senha = InputBox("Digite a senha QUERO_MIGRAR para prosseguir com a migra√ß√£o:", "Migrar Licen√ßa")
+    If Senha <> "QUERO_MIGRAR" Then MsgBox "Senha inv√°lida.", vbCritical: Exit Sub
     
     Set ws = ThisWorkbook.Sheets("Licenca_Sys")
     TipoLic = Val(ws.Range("A100").Value)
@@ -217,16 +216,16 @@ Public Sub REALIZAR_MIGRACAO()
     EmailCli = ws.Range("F1").Value
     IPCli = MeuIP()
     
-    NovoPC = InputBox("Digite o NOME DO COMPUTADOR de destino:" & vbNewLine & vbNewLine & "O arquivo ser· bloqueado aqui e liberado l·.", "MigraÁ„o - Passo 1")
+    NovoPC = InputBox("Digite o NOME DO COMPUTADOR de destino:" & vbNewLine & vbNewLine & "O arquivo ser√° bloqueado aqui e liberado l√°.", "Migra√ß√£o - Passo 1")
     If NovoPC = "" Then Exit Sub
     
     NovoUser = ""
     If TipoLic <= 3 Then
-        NovoUser = InputBox("Digite o NOME DE USU¡RIO do destino (Login do Windows):" & vbNewLine & vbNewLine & "LicenÁa Pessoal exige Nome de Usu·rio.", "MigraÁ„o - Passo 2")
-        If NovoUser = "" Then MsgBox "Para licenÁa pessoal, o usu·rio È obrigatÛrio.", vbCritical: Exit Sub
+        NovoUser = InputBox("Digite o NOME DE USU√ÅRIO do destino (Login do Windows):" & vbNewLine & vbNewLine & "Licen√ßa Pessoal exige Nome de Usu√°rio.", "Migra√ß√£o - Passo 2")
+        If NovoUser = "" Then MsgBox "Para licen√ßa pessoal, o usu√°rio √© obrigat√≥rio.", vbCritical: Exit Sub
     End If
     
-    If MsgBox("CONFIRMA«√O DE MIGRA«√O" & vbNewLine & vbNewLine & "De: " & AntigoPC & vbNewLine & "Para: " & NovoPC & vbNewLine & IIf(NovoUser <> "", "Novo User: " & NovoUser & vbNewLine, "") & "Ao clicar em SIM, este computador atual ser· BLOQUEADO.", vbExclamation + vbYesNo, "Confirmar MigraÁ„o") = vbYes Then
+    If MsgBox("CONFIRMA√á√ÉO DE MIGRA√á√ÉO" & vbNewLine & vbNewLine & "De: " & AntigoPC & vbNewLine & "Para: " & NovoPC & vbNewLine & IIf(NovoUser <> "", "Novo User: " & NovoUser & vbNewLine, "") & "Ao clicar em SIM, este computador atual ser√° BLOQUEADO.", vbExclamation + vbYesNo, "Confirmar Migra√ß√£o") = vbYes Then
         Application.ScreenUpdating = False
         StringEnvio = "MIGRACAO | De: " & AntigoPC & " | Para: " & NovoPC & " [Item " & modSentinela.ID_PRODUTO & "]"
         Call EnviarDadosGoogle(NomeCli, StringEnvio, NovoUser, IPCli, Format(Now, "dd/mm/yyyy hh:mm:ss"), EmailCli)
@@ -244,7 +243,7 @@ Public Sub REALIZAR_MIGRACAO()
         Call ForcarOcultarTudo
         ThisWorkbook.Save
         
-        Call Cortina_Migracao("AVISO DE MIGRA«√O: Esta licenÁa foi transferida para o computador: " & NovoPC)
+        Call Cortina_Migracao("AVISO DE MIGRA√á√ÉO: Esta licen√ßa foi transferida para o computador: " & NovoPC)
     End If
 End Sub
 
@@ -269,7 +268,7 @@ Public Sub AtualizarCarimboVisual()
     Dim wsSys As Worksheet, wsInicio As Worksheet
     On Error Resume Next
     Set wsSys = ThisWorkbook.Sheets("Licenca_Sys")
-    Set wsInicio = ThisWorkbook.Sheets("InÌcio")
+    Set wsInicio = ThisWorkbook.Sheets("In√≠cio")
     If Not wsSys Is Nothing And Not wsInicio Is Nothing Then
         Dim Email As String, Data As String
         Email = wsSys.Range("F1").Value
@@ -392,7 +391,7 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
             
             Dim LinhasMsg() As String
             Dim i As Long, linhaAtual As Long
-            LinhasMsg = Split("MOTIVO DA INTERCEPTA«√O: " & MensagemErro, vbNewLine)
+            LinhasMsg = Split("MOTIVO DA INTERCEPTA√á√ÉO: " & MensagemErro, vbNewLine)
             linhaAtual = 8
             
             For i = LBound(LinhasMsg) To UBound(LinhasMsg)
@@ -415,7 +414,7 @@ Public Sub AplicarCortinaDeFerro(ByVal MensagemErro As String)
                 .HorizontalAlignment = xlCenter
                 .VerticalAlignment = xlCenter
                 .WrapText = False
-                .Value = "Esta tentativa de acesso n„o foi autorizada. Entre em contato com o suporte"
+                .Value = "Esta tentativa de acesso n√£o foi autorizada. Entre em contato com o suporte"
                 .Font.Size = 14
             End With
             
@@ -461,7 +460,7 @@ Public Sub AplicarCortinaLaranja(ByVal MensagemErro As String)
                 .MergeCells = True
                 .HorizontalAlignment = xlCenter
                 .VerticalAlignment = xlCenter
-                .Value = "SISTEMA MIGRADO POR SEGURAN«A"
+                .Value = "SISTEMA MIGRADO POR SEGURAN√áA"
                 .Font.Size = 36
                 .Font.Bold = True
             End With
@@ -543,7 +542,7 @@ Public Sub Cortina_De_Ferro(ByVal Msg As String)
     AppActivate Application.Caption
     DoEvents
     
-    MsgBox "ACESSO NEGADO!" & vbNewLine & vbNewLine & Msg, vbCritical + vbSystemModal, "BLOQUEIO DE SEGURAN«A"
+    MsgBox "ACESSO NEGADO!" & vbNewLine & vbNewLine & Msg, vbCritical + vbSystemModal, "BLOQUEIO DE SEGURAN√áA"
     
     ' Salva silenciosamente e chama o motor de fechamento seguro
     Application.DisplayAlerts = False
@@ -568,7 +567,7 @@ Public Sub Cortina_Migracao(ByVal Msg As String)
     AppActivate Application.Caption
     DoEvents
     
-    MsgBox "SISTEMA MIGRADO!" & vbNewLine & vbNewLine & Msg, vbExclamation + vbSystemModal, "MIGRA«√O CONCLUÕDA"
+    MsgBox "SISTEMA MIGRADO!" & vbNewLine & vbNewLine & Msg, vbExclamation + vbSystemModal, "MIGRA√á√ÉO CONCLU√çDA"
     
     ' Salva silenciosamente e chama o motor de fechamento seguro
     Application.DisplayAlerts = False
@@ -1046,7 +1045,7 @@ Public Sub ReverterBlindagemClient()
         On Error GoTo 0
     Next i
     Application.ScreenUpdating = True
-    MsgBox "SUCESSO! Arquivos DESBLOQUEADOS em:" & vbCrLf & pastaDestino, vbInformation, "Nexcel - Revers„o"
+    MsgBox "SUCESSO! Arquivos DESBLOQUEADOS em:" & vbCrLf & pastaDestino, vbInformation, "Nexcel - Revers√£o"
 End Sub
 
 Private Sub SubstituirTextoXML(ByVal CaminhoArquivo As String, ByVal textoAntigo As String, ByVal textoNovo As String)
@@ -1250,7 +1249,7 @@ Private Function IsFileLocked(CaminhoArquivo As String) As Boolean
 End Function
 
 ' =========================================================================
-' INJE«√O DE VISIBILIDADE (MODO KIOSK EXTREMO APENAS COM ABAS)
+' INJE√á√ÉO DE VISIBILIDADE (MODO KIOSK EXTREMO APENAS COM ABAS)
 ' =========================================================================
 Public Sub INJETAR_PROTECAO_VISIBILIDADE(ByVal CaminhoArquivo As String)
     Dim wbDestino As Workbook
@@ -1402,7 +1401,7 @@ End Sub
 
 
 ' =========================================================================
-' MOTOR DE SEGURAN«A E FECHAMENTO: Garante que outras planilhas fiquem salvas
+' MOTOR DE SEGURAN√áA E FECHAMENTO: Garante que outras planilhas fiquem salvas
 ' =========================================================================
 Private Sub RestaurarUI_Seguro()
     On Error Resume Next
@@ -1438,7 +1437,7 @@ Private Sub FecharSistemaBlindado()
     End If
     
     If temOutroVisivel Then
-        Application.EnableEvents = True ' Permite a transiÁ„o normal restaurando a UI
+        Application.EnableEvents = True ' Permite a transi√ß√£o normal restaurando a UI
         wb.Activate
         DoEvents
     Else
@@ -1454,7 +1453,7 @@ Private Sub FecharSistemaBlindado()
 End Sub
 
 ' =========================================================================
-' SAIR DO SISTEMA (SIMULA O BOT√O X NATIVO) - ISOLADO E SEM LOOP VISUAL
+' SAIR DO SISTEMA (SIMULA O BOT√ÉO X NATIVO) - ISOLADO E SEM LOOP VISUAL
 ' =========================================================================
 Public Sub SAIR_DO_SISTEMA()
     On Error Resume Next
@@ -1463,7 +1462,7 @@ Public Sub SAIR_DO_SISTEMA()
     
     If Not ThisWorkbook.Saved Then
         Dim resposta As Integer
-        resposta = MsgBox("Deseja salvar as alteraÁıes feitas em '" & ThisWorkbook.Name & "'?", vbYesNoCancel + vbQuestion, "Salvar AlteraÁıes")
+        resposta = MsgBox("Deseja salvar as altera√ß√µes feitas em '" & ThisWorkbook.Name & "'?", vbYesNoCancel + vbQuestion, "Salvar Altera√ß√µes")
         
         If resposta = vbYes Then
             Application.EnableEvents = False
